@@ -1,11 +1,19 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Biblioteca.Application.Cors.Context;
-using Biblioteca.Domain.Repositories;
 using Biblioteca.Infrastructure.Cores.Contexts;
-using Biblioteca.Infrastructure.Persistences;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configuración de Serilog
+builder.Host.UseSerilog((context, services, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .WriteTo.Console()
+        .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day);
+});
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -32,7 +40,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage(); // 👈 AÑADE ESTA LÍNEA
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
